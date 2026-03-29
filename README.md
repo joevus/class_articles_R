@@ -43,6 +43,9 @@ Institutional login (SSO/EZproxy) remains manual — there's no way to automate 
 Rscript open_tabs.R path/to/syllabus.pdf
 ```
 
+> **Tip:** If your file path contains spaces, wrap it in quotes:
+> `Rscript open_tabs.R "path/to/my syllabus.pdf"`
+
 This opens browser tabs for each article — the final step is clicking the Zotero browser connector on each tab to save it to your library. The script will parse the syllabus, look up DOIs, then prompt you:
 
 ```
