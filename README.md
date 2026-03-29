@@ -17,9 +17,9 @@ Institutional login (SSO/EZproxy) remains manual — there's no way to automate 
 - **R** (any recent version) — [r-project.org](https://www.r-project.org)
 - **R packages**
   ```r
-  install.packages(c("pdftools", "httr2", "jsonlite", "optparse"))
+  install.packages(c("pdftools", "officer", "httr2", "jsonlite", "optparse"))
   ```
-  `pdftools` installs with Poppler bundled when using the CRAN binary (the default). Only if you build from source would you need `brew install poppler` separately.
+  `pdftools` installs with Poppler bundled when using the CRAN binary (the default). Only if you build from source would you need `brew install poppler` separately. `officer` is used for Word (.docx) syllabi.
 - **Zotero** desktop app + browser connector installed
 
 ## API keys

@@ -1,14 +1,16 @@
 #!/usr/bin/env Rscript
-# parser.R — Parse a syllabus PDF into weeks and citations.
+# parser.R — Parse a syllabus (PDF or Word doc) into weeks and citations.
 #
 # Required packages (install once):
-#   install.packages(c("pdftools", "httr2", "jsonlite", "optparse"))
+#   install.packages(c("pdftools", "officer", "httr2", "jsonlite", "optparse"))
 #
 # Usage:
 #   Rscript parser.R path/to/syllabus.pdf
+#   Rscript parser.R path/to/syllabus.docx
 #   Rscript parser.R path/to/syllabus.pdf --json   # raw JSON output
 
 library(pdftools)
+library(officer)
 library(httr2)
 library(jsonlite)
 library(optparse)
@@ -19,13 +21,26 @@ if (file.exists(".env")) readRenviron(".env")
 
 # --- Core functions -----------------------------------------------------------
 
-extract_pdf_text <- function(pdf_path) {
-  pages <- pdftools::pdf_text(pdf_path)
+extract_pdf_text <- function(path) {
+  pages <- pdftools::pdf_text(path)
   paste(pages, collapse = "\n\n")
 }
 
+extract_docx_text <- function(path) {
+  doc   <- officer::read_docx(path)
+  lines <- officer::docx_summary(doc)$text
+  paste(lines[!is.na(lines)], collapse = "\n")
+}
+
+extract_syllabus_text <- function(path) {
+  ext <- tolower(tools::file_ext(path))
+  if (ext == "pdf")        extract_pdf_text(path)
+  else if (ext == "docx")  extract_docx_text(path)
+  else stop("Unsupported file type: ", ext, ". Only PDF and Word (.docx) are supported.")
+}
+
 parse_syllabus <- function(pdf_path) {
-  text <- extract_pdf_text(pdf_path)
+  text <- extract_syllabus_text(pdf_path)
   if (!nzchar(trimws(text))) stop("Could not extract text from: ", pdf_path)
 
   prompt <- sprintf(
@@ -138,8 +153,8 @@ print_results <- function(weeks) {
 
 if (!interactive() && sys.nframe() == 0) {
   opt_parser <- OptionParser(
-    usage       = "Rscript %prog [options] <syllabus.pdf>",
-    description = "Parse a syllabus PDF into weeks and article citations.",
+    usage       = "Rscript %prog [options] <syllabus.pdf|syllabus.docx>",
+    description = "Parse a syllabus (PDF or Word doc) into weeks and article citations.",
     option_list = list(
       make_option("--json", action = "store_true", default = FALSE,
                   help = "Print raw JSON instead of formatted output")

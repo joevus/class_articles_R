@@ -64,6 +64,7 @@ Rscript open_tabs.R path/to/syllabus.pdf --delay 2   # seconds between tabs
 All HTTP calls use `httr2` directly — no wrapper packages for Crossref or Zotero.
 
 - `pdftools` — extract text from syllabus PDFs (install binary version on Mac for bundled Poppler)
+- `officer` — extract text from syllabus Word (.docx) files
 - `httr2` — all API calls (Gemini, Crossref)
 - `jsonlite` — JSON parsing and serialization
 - `optparse` — CLI argument parsing
