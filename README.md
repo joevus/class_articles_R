@@ -1,10 +1,10 @@
 # Syllabus to Zotero
 
-Automates importing grad school syllabus readings into Zotero. Give it a syllabus PDF and it opens a browser tab for each article so you just click the Zotero connector — no more Googling each citation manually.
+Automates importing grad school syllabus readings into Zotero. Give it a syllabus PDF or Word doc and it opens a browser tab for each article so you just click the Zotero connector — no more Googling each citation manually.
 
 ## How it works
 
-1. Extracts citations from a syllabus PDF using Google Gemini
+1. Extracts citations from a syllabus PDF or Word doc using Google Gemini
 2. Looks up each citation's DOI via the Crossref API
 3. Prompts you to choose a week (or all weeks)
 4. Opens `https://doi.org/<doi>` in your browser for each article
@@ -12,9 +12,12 @@ Automates importing grad school syllabus readings into Zotero. Give it a syllabu
 
 Institutional login (SSO/EZproxy) remains manual — there's no way to automate that.
 
+> **Note:** These instructions are written for Mac users. Windows users should see the [Windows](#windows) section below.
+
 ## Prerequisites
 
 - **R** (any recent version) — [r-project.org](https://www.r-project.org)
+- **RStudio** (recommended) — [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/)
 - **R packages**
   ```r
   install.packages(c("pdftools", "officer", "httr2", "jsonlite", "optparse"))
@@ -37,7 +40,7 @@ Institutional login (SSO/EZproxy) remains manual — there's no way to automate 
    ```
    Then open `.env` and set `GEMINI_API_KEY` (and optionally `CROSSREF_EMAIL`).
 
-## Usage
+## Usage (Mac — Terminal)
 
 ```bash
 Rscript open_tabs.R path/to/syllabus.pdf
@@ -72,6 +75,23 @@ After you choose, it opens one tab per article. Articles with no DOI found are p
 Rscript open_tabs.R path/to/syllabus.pdf --min-score 70 --delay 2
 ```
 
+## Usage (RStudio)
+
+1. Open `run.R` in RStudio
+2. Update the file path on this line to point to your syllabus:
+   ```r
+   weeks <- parse_syllabus("path/to/your/syllabus.pdf")
+   ```
+3. Click the **Source** button in the top-right corner of the editor pane
+
+The week selection prompt will appear in the RStudio console.
+
+## Windows
+
+The easiest way to run this on Windows is via RStudio — see the [RStudio usage instructions](#usage-rstudio) above. RStudio handles everything without needing `Rscript` on your system PATH.
+
+If you prefer the terminal (Command Prompt or PowerShell), you'll need `Rscript` on your PATH. The R installer for Windows doesn't always add it automatically, so you may need to add it manually. Once it's on your PATH the commands are the same as the Mac terminal instructions above.
+
 ## Syllabus format
 
 The syllabus must label weeks clearly for the parser to detect them — for example:
@@ -86,7 +106,7 @@ These run automatically as part of the pipeline but can also be run standalone f
 
 | Script | What it does |
 |--------|-------------|
-| `parser.R` | Extracts week labels and citations from a syllabus PDF |
+| `parser.R` | Extracts week labels and citations from a syllabus PDF or Word doc |
 | `doi_lookup.R` | Looks up DOIs and bibliographic metadata via Crossref |
 
 Each accepts `--json` to output raw JSON, and `--min-score` where applicable.
