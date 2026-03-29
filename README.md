@@ -12,12 +12,10 @@ Automates importing grad school syllabus readings into Zotero. Give it a syllabu
 
 Institutional login (SSO/EZproxy) remains manual — there's no way to automate that.
 
-> **Note:** These instructions are written for Mac users. Windows users should see the [Windows](#windows) section below.
-
 ## Prerequisites
 
 - **R** (any recent version) — [r-project.org](https://www.r-project.org)
-- **RStudio** (recommended) — [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/)
+- **RStudio** (optional) — [posit.co/download/rstudio-desktop](https://posit.co/download/rstudio-desktop/)
 - **R packages**
   ```r
   install.packages(c("pdftools", "officer", "httr2", "jsonlite", "optparse"))
@@ -40,7 +38,22 @@ Institutional login (SSO/EZproxy) remains manual — there's no way to automate 
    ```
    Then open `.env` and set `GEMINI_API_KEY` (and optionally `CROSSREF_EMAIL`).
 
-## Usage (Mac — Terminal)
+## Usage
+
+There are two ways to run this: via RStudio or the terminal. Both prompt you to select a week or all weeks before opening tabs.
+
+### RStudio
+
+1. Open `run.R` in RStudio
+2. Update the file path on this line to point to your syllabus:
+   ```r
+   weeks <- parse_syllabus("path/to/your/syllabus.pdf")
+   ```
+3. Click the **Source** button in the top-right corner of the editor pane
+
+The script will parse the syllabus, look up DOIs, then prompt you in the console to select a week or all weeks. After you choose, it opens one browser tab per article — click the Zotero browser connector on each tab to save it to your library. Articles with no DOI found are printed at the end for manual lookup.
+
+### Terminal (Mac)
 
 ```bash
 Rscript open_tabs.R path/to/syllabus.pdf
@@ -48,21 +61,6 @@ Rscript open_tabs.R path/to/syllabus.pdf
 
 > **Tip:** If your file path contains spaces, wrap it in quotes:
 > `Rscript open_tabs.R "path/to/my syllabus.pdf"`
-
-This opens browser tabs for each article — the final step is clicking the Zotero browser connector on each tab to save it to your library. The script will parse the syllabus, look up DOIs, then prompt you:
-
-```
-Which week would you like to open?
-
-   1. Week 1 Demand Side of International Trade (6 DOI(s))
-   2. Week 2 Supply Side of International Trade (5 DOI(s))
-   ...
-   a. All weeks
-
-Enter a number or 'a' for all:
-```
-
-After you choose, it opens one tab per article. Articles with no DOI found are printed at the end for manual lookup.
 
 ### Options
 
@@ -75,22 +73,11 @@ After you choose, it opens one tab per article. Articles with no DOI found are p
 Rscript open_tabs.R path/to/syllabus.pdf --min-score 70 --delay 2
 ```
 
-## Usage (RStudio)
-
-1. Open `run.R` in RStudio
-2. Update the file path on this line to point to your syllabus:
-   ```r
-   weeks <- parse_syllabus("path/to/your/syllabus.pdf")
-   ```
-3. Click the **Source** button in the top-right corner of the editor pane
-
-The week selection prompt will appear in the RStudio console.
-
 ## Windows
 
-The easiest way to run this on Windows is via RStudio — see the [RStudio usage instructions](#usage-rstudio) above. RStudio handles everything without needing `Rscript` on your system PATH.
+RStudio is the recommended approach on Windows — see the [RStudio usage instructions](#usage-rstudio) above. It works without needing `Rscript` on your system PATH.
 
-If you prefer the terminal (Command Prompt or PowerShell), you'll need `Rscript` on your PATH. The R installer for Windows doesn't always add it automatically, so you may need to add it manually. Once it's on your PATH the commands are the same as the Mac terminal instructions above.
+If you prefer the terminal (Command Prompt or PowerShell), the R installer for Windows doesn't always add `Rscript` to PATH automatically, so you may need to do that manually. Once on PATH, the commands are the same as the Mac terminal instructions above.
 
 ## Syllabus format
 
