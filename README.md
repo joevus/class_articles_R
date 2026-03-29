@@ -87,3 +87,7 @@ These run automatically as part of the pipeline but can also be run standalone f
 | `doi_lookup.R` | Looks up DOIs and bibliographic metadata via Crossref |
 
 Each accepts `--json` to output raw JSON, and `--min-score` where applicable.
+
+## Credits
+
+Built with the help of [Claude](https://claude.ai) by Anthropic.
