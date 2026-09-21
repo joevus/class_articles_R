@@ -28,14 +28,21 @@ prompt_week_selection <- function(weeks) {
   cat("\nWhich week would you like to open?\n\n")
   for (i in seq_along(weeks)) {
     n_doi <- sum(vapply(weeks[[i]]$citations,
-                        function(c) !is.null(c$doi) && nzchar(c$doi %||% ""), logical(1)))
+                        function(c) !is.na(c$doi %||% NA_character_), logical(1)))
     cat(sprintf("  %2d. %s (%d DOI(s))\n", i, weeks[[i]]$label, n_doi))
   }
   cat(sprintf("   a. All weeks\n\n"))
 
   repeat {
-    cat("Enter a number or 'a' for all: ")
-    raw <- trimws(readLines(con = "stdin", n = 1))
+    # readline() reads from the RStudio console; stdin is needed under Rscript
+    raw <- if (interactive()) {
+      readline("Enter a number or 'a' for all: ")
+    } else {
+      cat("Enter a number or 'a' for all: ")
+      readLines(con = "stdin", n = 1)
+    }
+    if (length(raw) == 0) stop("No input received for week selection.")
+    raw <- trimws(raw)
     if (tolower(raw) == "a") return("all")
     n <- suppressWarnings(as.integer(raw))
     if (!is.na(n) && n >= 1L && n <= length(weeks)) return(n)
