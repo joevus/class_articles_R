@@ -86,7 +86,7 @@ SYLLABUS TEXT:
     req_url_query(key = Sys.getenv("GEMINI_API_KEY")) |>
     req_body_json(list(
       contents          = list(list(parts = list(list(text = prompt)))),
-      generationConfig  = list(temperature = 0)
+      generationConfig  = list(temperature = 0, responseMimeType = "application/json")
     )) |>
     req_error(is_error = \(r) FALSE) |>   # handle HTTP errors manually
     req_perform()
@@ -98,14 +98,6 @@ SYLLABUS TEXT:
   raw_text <- resp |>
     resp_body_json() |>
     (\(r) r$candidates[[1]]$content$parts[[1]]$text)()
-
-  # Strip markdown code fences if Gemini wraps the JSON
-  raw_text <- trimws(raw_text)
-  if (startsWith(raw_text, "```")) {
-    lines <- strsplit(raw_text, "\n")[[1]]
-    end   <- if (tail(lines, 1) == "```") length(lines) - 1L else length(lines)
-    raw_text <- paste(lines[2:end], collapse = "\n")
-  }
 
   data <- fromJSON(raw_text, simplifyVector = FALSE)
 
