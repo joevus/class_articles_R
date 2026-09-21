@@ -32,11 +32,15 @@ Institutional login (SSO/EZproxy) remains manual — there's no way to automate 
 
 ## Setup
 
-1. Copy the example env file and fill in your keys:
+1. Make a copy of `.env.example` in the project folder and name it `.env`. On Mac/Linux:
    ```bash
    cp .env.example .env
    ```
+   On Windows (Command Prompt): `copy .env.example .env`
+
    Then open `.env` and set `GEMINI_API_KEY` (and optionally `CROSSREF_EMAIL`).
+
+> **Important:** Always run the scripts from the project folder. They load each other and read `.env` using paths relative to the current working directory.
 
 ## Usage
 
@@ -44,18 +48,22 @@ There are two ways to run this: via RStudio or the terminal. Both prompt you to 
 
 ### RStudio
 
-1. Open `run.R` in RStudio
-2. Update the file path on this line to point to your syllabus:
+1. Set the working directory to the project folder: **Session → Set Working Directory → Choose Directory…** (or open the folder as an RStudio project)
+2. Open `run.R` in RStudio
+3. Update the file path on this line to point to your syllabus:
    ```r
    weeks <- parse_syllabus("path/to/your/syllabus.pdf")
    ```
-3. Click the **Source** button in the top-right corner of the editor pane
+4. Click the **Source** button in the top-right corner of the editor pane
 
 The script will parse the syllabus, look up DOIs, then prompt you in the console to select a week or all weeks. After you choose, it opens one browser tab per article — click the Zotero browser connector on each tab to save it to your library. Articles with no DOI found are printed at the end for manual lookup.
+
+> **What to expect:** Crossref won't match every citation — on one test syllabus it found DOIs for about two-thirds of the articles (59 of 88). The misses are listed at the end so you can look them up by hand.
 
 ### Terminal (Mac)
 
 ```bash
+cd path/to/class_articles_R
 Rscript open_tabs.R path/to/syllabus.pdf
 ```
 
@@ -75,7 +83,7 @@ Rscript open_tabs.R path/to/syllabus.pdf --min-score 70 --delay 2
 
 ## Windows
 
-RStudio is the recommended approach on Windows — see the [RStudio usage instructions](#usage-rstudio) above. It works without needing `Rscript` on your system PATH.
+RStudio is the recommended approach on Windows — see the [RStudio usage instructions](#rstudio) above. It works without needing `Rscript` on your system PATH.
 
 If you prefer the terminal (Command Prompt or PowerShell), the R installer for Windows doesn't always add `Rscript` to PATH automatically, so you may need to do that manually. Once on PATH, the commands are the same as the Mac terminal instructions above.
 
