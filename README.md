@@ -106,6 +106,22 @@ These run automatically as part of the pipeline but can also be run standalone f
 
 Each accepts `--json` to output raw JSON, and `--min-score` where applicable.
 
+## Obsidian week folders
+
+`obsidian_folders.R` creates one folder per syllabus week in your Obsidian vault, named like `Week 1 - Demand Side of International Trade`. It only uses Gemini; it doesn't call Crossref or open any tabs. Folders that already exist are skipped, so it's safe to run more than once.
+
+```bash
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/path/to/Vault/Classes/POL209
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/path/to/Vault/Classes/POL209 --dry-run   # preview names only
+```
+
+In RStudio:
+```r
+source("obsidian_folders.R")
+weeks <- parse_syllabus("path/to/your/syllabus.pdf")
+create_week_folders(weeks, "~/path/to/Vault/Classes/POL209")
+```
+
 ## Credits
 
 Built with the help of [Claude](https://claude.ai) by Anthropic.

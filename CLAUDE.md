@@ -59,6 +59,15 @@ Rscript open_tabs.R path/to/syllabus.pdf --min-score 70
 Rscript open_tabs.R path/to/syllabus.pdf --delay 2   # seconds between tabs
 ```
 
+### `obsidian_folders.R`
+Sources `parser.R` only (no Crossref). Creates one folder per week in an Obsidian vault directory, named `Week <n> - <topic>` (no zero padding). The week number is taken from the label (Week/Session/Module/etc.), falling back to the week's position. Characters that are invalid in file names or Obsidian links are stripped, and existing folders are skipped.
+
+**Usage:**
+```bash
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/Vault/Classes/POL209
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/Vault/Classes/POL209 --dry-run
+```
+
 ## Key Libraries
 
 All HTTP calls use `httr2` directly — no wrapper packages for Crossref or Zotero.
