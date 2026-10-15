@@ -39,9 +39,15 @@ extract_syllabus_text <- function(path) {
   else stop("Unsupported file type: ", ext, ". Only PDF and Word (.docx) are supported.")
 }
 
-parse_syllabus <- function(pdf_path) {
+parse_syllabus <- function(pdf_path, required_only = FALSE) {
   text <- extract_syllabus_text(pdf_path)
   if (!nzchar(trimws(text))) stop("Could not extract text from: ", pdf_path)
+
+  # Off by default so the Zotero pipeline still gets every reading
+  required_rule <- if (required_only) '
+Only include REQUIRED readings. Skip any reading listed under a heading such as
+"Recommended", "Further Reading", "Optional", "Supplementary", or "Additional".
+' else ""
 
   prompt <- sprintf(
     'You are extracting structured data from a grad school course syllabus.
@@ -60,7 +66,7 @@ Include the full citation text as it appears.
 
 Ignore: syllabus metadata (instructor info, office hours, grading policies, course
 descriptions), and non-reading items like "in-class discussion" or "problem set due".
-
+%s
 Return a JSON object with this exact structure:
 {
   "weeks": [
@@ -79,7 +85,7 @@ Return only valid JSON, no other text.
 
 SYLLABUS TEXT:
 %s',
-    text
+    required_rule, text
   )
 
   resp <- request("https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent") |>

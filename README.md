@@ -108,18 +108,30 @@ Each accepts `--json` to output raw JSON, and `--min-score` where applicable.
 
 ## Obsidian week folders
 
-`obsidian_folders.R` creates one folder per syllabus week in your Obsidian vault, named like `Week 1 - Demand Side of International Trade`. It only uses Gemini; it doesn't call Crossref or open any tabs. Folders that already exist are skipped, so it's safe to run more than once.
+`obsidian_folders.R` creates one folder per syllabus week in your Obsidian vault, named like `Week 1 - Demand Side of International Trade`. Inside each week's folder it creates one note per reading, named after the authors' last names and year (`Krugman 1979`, `Eaton and Kortum 2002`, `Bernard et al 2007`), with the full citation on the first line. If one week has two readings with the same name, they become `Krugman 1979a` and `Krugman 1979b`.
+
+It only uses Gemini; it doesn't call Crossref or open any tabs. Folders and notes that already exist are skipped (never overwritten), so it's safe to run more than once. If you already made a folder for a week (e.g. `Week 4 Elections and accountability`), that week's notes go into it instead of a new folder.
 
 ```bash
 Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/path/to/Vault/Classes/POL209
-Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/path/to/Vault/Classes/POL209 --dry-run   # preview names only
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/path/to/Vault/Classes/POL209 --dry-run   # preview folder and note names only
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/path/to/Vault/Classes/POL209 \
+  --weeks 4-9 --required-only --journal
 ```
+
+| Flag | What it does |
+|---|---|
+| `--dir` | Folder in your vault where week folders go (required) |
+| `--dry-run` | Print the folder and note names without creating anything |
+| `--weeks` | Only these week numbers: `5`, `4-9`, `1,3,5`, or `2-4,8`. Weeks the syllabus doesn't have are skipped |
+| `--required-only` | Skip readings under "Recommended", "Further Reading", "Optional", etc. |
+| `--journal` | Add a journal abbreviation to note names, e.g. `Gingerich 2013 BJPS` (books and chapters get none) |
 
 In RStudio:
 ```r
 source("obsidian_folders.R")
-weeks <- parse_syllabus("path/to/your/syllabus.pdf")
-create_week_folders(weeks, "~/path/to/Vault/Classes/POL209")
+weeks <- parse_syllabus("path/to/your/syllabus.pdf", required_only = TRUE)
+create_week_folders(weeks, "~/path/to/Vault/Classes/POL209", only_weeks = 4:9, journal = TRUE)
 ```
 
 ## Credits

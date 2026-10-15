@@ -60,12 +60,17 @@ Rscript open_tabs.R path/to/syllabus.pdf --delay 2   # seconds between tabs
 ```
 
 ### `obsidian_folders.R`
-Sources `parser.R` only (no Crossref). Creates one folder per week in an Obsidian vault directory, named `Week <n> - <topic>` (no zero padding). The week number is taken from the label (Week/Session/Module/etc.), falling back to the week's position. Characters that are invalid in file names or Obsidian links are stripped, and existing folders are skipped.
+Sources `parser.R` only (no Crossref). Creates one folder per week in an Obsidian vault directory, named `Week <n> - <topic>` (no zero padding). The week number is taken from the label (Week/Session/Module/etc., or a bare `4.` / `1 –` prefix), falling back to the week's position. Characters that are invalid in file names or Obsidian links are stripped. If a folder for that week number already exists under any name (matched by `^Week <n>`), notes go into it instead.
+
+Inside each week folder it writes one `.md` note per reading whose only content is the raw citation. Author last names, years and journal abbreviations come from a second Gemini call (`add_author_names()`, one request for the whole syllabus) so `parser.R`'s output stays unchanged for the Zotero pipeline. Note titles: `Smith 2010`, `Smith and Jones 2010`, `Smith et al 2010` (plus the journal with `--journal`, e.g. `Smith 2010 APSR`); duplicates within a week get `a`/`b` suffixes; no authors falls back to the start of the citation. Existing folders and notes are never overwritten.
+
+`--required-only` passes `required_only = TRUE` to `parse_syllabus()`, which tells Gemini to skip Recommended/Further Reading sections. It defaults to `FALSE` so the Zotero pipeline still gets every reading. `--weeks` accepts `5`, `4-9`, `1,3,5`, or `2-4,8` (`parse_week_numbers()`); weeks are numbered before filtering.
 
 **Usage:**
 ```bash
 Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/Vault/Classes/POL209
 Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/Vault/Classes/POL209 --dry-run
+Rscript obsidian_folders.R path/to/syllabus.pdf --dir ~/Vault/Classes/POL209 --weeks 4-9 --required-only --journal
 ```
 
 ## Key Libraries
